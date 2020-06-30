@@ -3,7 +3,9 @@ const app = express();
 
 // res means response
 
+// need one of these for every url route
 app.use("/api/v1/users", require("./api/v1/users")); // the route and then the file
+app.use("/api/v1/memory-cards", require("./api/v1/memory-cards")); // the route and then the file
 app.get("/", (req, res) => res.send("Hello World!"));
 
 const port = process.env.PORT || 3045; // use the variable we have for the port or a default port of 3045
