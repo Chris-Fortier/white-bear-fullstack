@@ -1,0 +1,235 @@
+.btn-link {
+   padding-left: 0;
+   padding-right: 0;
+   font-weight: $font-weight-bold;
+   border: 0;
+}
+
+.text-brand {
+   font-family: $font-family-brand;
+}
+
+.tab-separator {
+   border-left: 1px $gray-800 solid;
+}
+
+.tab-active {
+   background-color: $gray-800;
+}
+
+.card {
+   border: 0;
+}
+
+.card-body {
+   color: $white;
+   font-family: $font-family-serif;
+   font-size: $font-size-base * 1.25;
+}
+
+.card-body.allcards {
+   // cjf make smaller text for the all-cards view
+   font-size: $font-size-base;
+}
+
+.card.bg-primary {
+   border-bottom-left-radius: 0;
+   border-bottom-right-radius: 0;
+}
+
+.card.bg-secondary {
+   border-top-left-radius: 0;
+   border-top-right-radius: 0;
+} // broken
+
+.btn-navigation {
+   // cjf
+   // makes the nav buttons not bold
+   font-weight: $font-weight-normal;
+}
+
+.card-title {
+   // cjf style for the card titles on the landing page
+   // should I make a class here or just use h2
+   font-family: $font-family-serif;
+   font-size: 27px; // this is not a spacer size, so just put value here?
+   font-weight: normal; // looks too thick
+}
+
+.landing-page {
+   // cjf
+   // formatting specific to the landing page
+
+   h1 {
+      color: $white;
+      vertical-align: middle;
+      padding-left: map-get(
+         $spacers,
+         6
+      ); // somewhere between 6 and 7 matches the screenshot
+   }
+
+   img.small-title {
+      // smaller title logo in a small browser on the landing page
+      width: 20.3125vw; // 20.3125% is 156px logo width at 768 viewport withd, which is the size of the image when it starts shrinking
+   }
+
+   h1.small-title {
+      // smaller title text in a small browser on the landing page
+      font-size: 7.8125vw; // 7.8125% is 60px font at 768 viewport width, which is the size it should start shrinking from
+      padding-left: 4.1667vw; // 4.1667% is 32px padding between logo and title, size it should be when it starts shrinking
+   }
+
+   .card {
+      padding: map-get($spacers, 4); // padding for cards on title page
+      margin-bottom: map-get(
+         $spacers,
+         8
+      ); // adds space between the cards when displayed vertically with small screen sizes
+   }
+
+   label {
+      // labels on the forms on the landing page
+      font-size: $font-size-base * 1.25;
+      margin-top: map-get($spacers, 2);
+      margin-bottom: map-get($spacers, 1);
+   }
+}
+
+label {
+   // add labels have muted text
+   color: $text-muted;
+}
+
+// body {
+//    background-color: red;
+// }
+
+// // my version
+// .background-image {
+//    background: url("../img/background-landing.jpg"); // need / before folder name in this path
+//    background-position-x: center; // keeps image centered, does not stretch it
+//    background-position-y: top; // always puts the image centered at the top
+//    background-repeat: no-repeat;
+//    // background-color: #010b14; // if the screen is taller than the image (such as small width screen with the form open), continue the background with flat black color so it looks like the image is just continuing
+//    // height: 100vh;
+//    // background-size: auto 100%;
+//    // background: fixed;
+//    // height: 100vh;
+//    height: 1080px;
+// }
+
+// html {
+//    /* set this so the divs that extend beyond the background image have a background color that matches the image */
+//    background-color: #010b14;
+// }
+
+.background-image {
+   /* https://css-tricks.com/perfect-full-page-background-image/ */
+   background: url("../img/background-landing.jpg") no-repeat center center
+      fixed;
+   background-size: cover;
+   min-height: 100vh;
+}
+
+// // Mike's version modified
+// .background-image {
+//    background: url("../img/background-landing.jpg") no-repeat center center; // removed fixed
+//    background-size: cover;
+//    height: 1080px; // changed from 100vh to auto to 1080px
+// }
+
+// .background-image {
+//    background-image: url("../img/background-landing.jpg");
+//    background-position: center;
+//    background-repeat: no-repeat;
+//    background-size: cover;
+//    height: 100vh;
+// }
+// Joseph 2
+// .background-image {
+//    background-image: url("../img/background-landing.jpg");
+//    background-repeat: no-repeat;
+//    background-size: auto;
+//    background-position: center;
+// }
+
+// .full-height {
+//    height: 2000px;
+// }
+
+.red {
+   background-color: red;
+}
+
+.green {
+   background-color: green;
+}
+
+.blue {
+   background-color: blue;
+}
+
+.cyan {
+   background-color: cyan;
+}
+
+h4 {
+   // change all h4 headings here in one place
+   text-align: center;
+   color: $text-muted;
+}
+
+.card textarea {
+   color: $white;
+   background: transparent;
+
+   border: none;
+   overflow: auto;
+   outline: none;
+
+   -webkit-box-shadow: none;
+   -moz-box-shadow: none;
+   box-shadow: none;
+
+   resize: none;
+   padding: 0px;
+   width: 100%;
+}
+
+.bg-success p.lead,
+.bg-danger p.lead {
+   color: $white;
+   margin-bottom: 0; // put here so I won't mess up p text on landing page elsewhere with the global theme solution
+}
+
+th {
+   // makes the table row titles normal muted instead of bold
+   color: $text-muted;
+   font-weight: $font-weight-normal;
+}
+
+.form-control,
+.dropdown-toggle,
+select {
+   // sets the border color of these things to a medium gray
+   border-color: $gray-400;
+   font-weight: $font-weight-normal;
+
+   // -webkit-box-shadow: none;
+   // -moz-box-shadow: none;
+   // box-shadow: none;
+}
+
+// .custom-control-label:before {
+//    background-color: none;
+// }
+// .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+//    background-color: $primary;
+// }
+
+// make the cursor turn into Ghostbusters logo when over a disabled thing
+.disabled {
+   pointer-events: fill !important;
+   cursor: not-allowed;
+}
