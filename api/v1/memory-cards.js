@@ -10,17 +10,22 @@ const selectAllCards = require("../../queries/selectAllCards"); // change this
 router.get("/", (req, res) => {
    console.log(req.query);
    const { userId, searchTerm, order } = req.query; // put the query into some consts (destructoring es6)
-   let fixedSearchTerm;
+   let constructedSearchTerm;
    if (searchTerm === undefined) {
-      fixedSearchTerm = "%%";
+      constructedSearchTerm = "%%";
    } else {
-      fixedSearchTerm = `%${searchTerm}%`; // my fix
+      constructedSearchTerm = `%${searchTerm}%`; // my fix
    }
 
    // change this
    // db.query(selectAllCards(userId, searchTerm, order))
    // https://www.npmjs.com/package/mysql#escaping-query-values
-   db.query(selectAllCards, [userId, fixedSearchTerm, fixedSearchTerm, order]) // this syntax style prevents hackers
+   db.query(selectAllCards, [
+      userId,
+      constructedSearchTerm,
+      constructedSearchTerm,
+      { toSqlString: () => order }, // this will convert order to a SQL string
+   ]) // this syntax style prevents hackers
       .then((memoryCards) => {
          // successful response
          // console.log(memoryCards);
