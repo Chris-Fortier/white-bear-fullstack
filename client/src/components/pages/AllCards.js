@@ -1,68 +1,24 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
 import MemoryCard from "../ui/MemoryCard";
-// import memoryCards from "../../mock-data/memory-cards";
-import orderBy from "lodash/orderBy";
 import axios from "axios";
+
+const userId = "6eb4cf5f-f8d8-4e7c-9663-764438da6e18";
 
 export default class AllCards extends React.Component {
    constructor(props) {
       super(props);
 
       this.state = {
-         order: '[["createdAt"], ["desc"]]',
-         displayedMemoryCards: [],
-         allMemoryCards: [],
+         order: "memory_cards.created_at%20DESC",
+         memoryCards: [],
+         searchTerm: "",
       };
    }
 
    // this is a "lifecycle" method like render(), we don't need to call it manually
    componentDidMount() {
-      axios
-         .get(
-            "/api/v1/memory-cards?userId=6eb4cf5f-f8d8-4e7c-9663-764438da6e18&searchTerm=saw&order=%60memory_cards%60.%60created_at%60%20DESC"
-         )
-         .then((res) => {
-            // handle success
-            // res is shorthand for response
-            // changed to an ES6 arrow function so we can use "this" inside of it
-            // they maintian the this from above and don't override it
-            console.log(res.data);
-            const memoryCards = res.data;
-            this.setState({
-               displayedMemoryCards: orderBy(
-                  memoryCards,
-                  ["createdAt"],
-                  ["desc"]
-               ),
-               allMemoryCards: orderBy(memoryCards, ["createdAt"], ["desc"]),
-            });
-         })
-         .catch((error) => {
-            // handle error
-            console.log(error);
-         });
-   }
-
-   filterByInput() {
-      const input = document.getElementById("search-input").value;
-      const lowerCasedInput = input.toLowerCase();
-      console.log("filter input", lowerCasedInput);
-      const copyOfAllMemoryCards = [...this.state.allMemoryCards];
-      const filteredMemoryCards = copyOfAllMemoryCards.filter((memoryCard) => {
-         // filter all cards that include input in either the answer or imagery
-         if (
-            memoryCard.imagery.toLowerCase().includes(lowerCasedInput) ||
-            memoryCard.answer.toLowerCase().includes(lowerCasedInput)
-         ) {
-            return true;
-         }
-         return false;
-      });
-
-      this.setState({ displayedMemoryCards: filteredMemoryCards }, () =>
-         this.setMemoryCards()
-      );
+      this.setMemoryCards();
    }
 
    setOrder(e) {
@@ -71,16 +27,32 @@ export default class AllCards extends React.Component {
       this.setState({ order: newOrder }, () => this.setMemoryCards()); // this will call the fucntion after setting the state, ()=> this syntax is necessary
    }
 
-   // this looks at the order and reorders the memory cards
+   setSearchTerm() {
+      const searchInput = document.getElementById("search-input").value;
+      this.setState({ searchTerm: searchInput }, () => {
+         this.setMemoryCards();
+      });
+   }
+
    setMemoryCards() {
-      console.log("Setting memory cards");
-      const copyOfDisplayedMemoryCards = [...this.state.displayedMemoryCards];
-      console.log("this.state.order", this.state.order);
-      const toJson = JSON.parse(this.state.order);
-      console.log("...toJson", toJson);
-      const orderedMemoryCards = orderBy(copyOfDisplayedMemoryCards, ...toJson);
-      console.log("orderedMemoryCards", orderedMemoryCards);
-      this.setState({ displayedMemoryCards: orderedMemoryCards });
+      axios
+         .get(
+            `/api/v1/memory-cards?userId=${userId}&searchTerm=${this.state.searchTerm}&order=${this.state.order}`
+         )
+         .then((res) => {
+            // handle success
+            // res is shorthand for response
+            // changed to an ES6 arrow function so we can use "this" inside of it
+            // they maintian the this from above and don't override it
+            console.log(res.data);
+            this.setState({
+               memoryCards: res.data,
+            });
+         })
+         .catch((error) => {
+            // handle error
+            console.log(error);
+         });
    }
 
    // // changes the order of the memory cards
@@ -109,7 +81,7 @@ export default class AllCards extends React.Component {
                <div className="col-4">
                   <button
                      className="btn btn-primary btn-block btn-sm"
-                     onClick={() => this.filterByInput()}
+                     onClick={() => this.setSearchTerm()}
                      id="search-button"
                      type="button"
                   >
@@ -132,14 +104,16 @@ export default class AllCards extends React.Component {
                         style={{ height: "36px" }}
                         onChange={(e) => this.setOrder(e)}
                      >
-                        <option value='[["createdAt"], ["desc"]]'>
+                        <option value="memory_cards.created_at%20DESC">
                            Most recent
                         </option>
-                        <option value='[["createdAt"], ["asc"]]'>Oldest</option>
-                        <option value='[["totalSuccessfulAttempts", "createdAt"], ["asc", "asc"]]'>
+                        <option value="memory_cards.created_at%20ASC">
+                           Oldest
+                        </option>
+                        <option value="memory_cards.total_successful_attempts%20ASC,%20memory_cards.created_at%20ASC">
                            Hardest
                         </option>
-                        <option value='[["totalSuccessfulAttempts", "createdAt"], ["desc", "desc"]]'>
+                        <option value="memory_cards.total_successful_attempts%20DESC,%20memory_cards.created_at%20DESC">
                            Easiest
                         </option>
                      </select>
@@ -147,7 +121,7 @@ export default class AllCards extends React.Component {
                </div>
             </form>
 
-            {this.state.displayedMemoryCards.map((memoryCard) => {
+            {this.state.memoryCards.map((memoryCard) => {
                return <MemoryCard card={memoryCard} key={memoryCard.id} />;
             })}
          </AppTemplate>
