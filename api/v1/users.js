@@ -26,11 +26,12 @@ router.get("/", (req, res) => {
 // @route      POST api/v1/users (going to post one thing to this list of things)
 // @desc       Creat a new user
 // @access     Public
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
    const user = req.body;
    // hash the password
    // npm install bcrypt
-   user.password = toHash(user.password);
+   const newPassword = await toHash(user.password);
+   user.password = newPassword;
    console.log(user);
 }); // this is an express function
 
