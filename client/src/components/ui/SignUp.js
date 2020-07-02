@@ -1,11 +1,10 @@
 import React from "react";
 import classnames from "classnames";
-import hash from "object-hash";
 import { v4 as getUuid } from "uuid";
 import { withRouter } from "react-router-dom"; // a React element for linking
 import { EMAIL_REGEX } from "../../utils/helpers";
 import axios from "axios";
-import actions from "../../store/actions";
+// import actions from "../../store/actions";
 import { connect } from "react-redux";
 
 class SignUp extends React.Component {
@@ -106,32 +105,26 @@ class SignUp extends React.Component {
       await this.setPasswordState(passwordInput, emailInput);
 
       if (!this.state.hasEmailError && !this.state.hasPasswordError) {
+         // create user obj
          const user = {
-            id: getUuid(),
+            id: getUuid(), // make a new uuid
             email: emailInput,
-            password: hash(passwordInput),
+            password: passwordInput, // send the plain text password over secure connection, the server will hash it
             createdAt: Date.now(),
          };
          console.log("created user object for POST: ", user);
 
-         // Mimic API response:
+         // post to API
          axios
-            .get(
-               "https://raw.githubusercontent.com/Chris-Fortier/white-bear-mpa/master/src/mock-data/user.json"
-            )
+            .post("/api/v1/users", user) // post to this endpoint the user object we just made
             .then((res) => {
-               const currentUser = res.data;
-               console.log(currentUser);
-               this.props.dispatch({
-                  type: actions.UPDATE_CURRENT_USER,
-                  payload: res.data,
-               });
+               console.log(res);
             })
-            .catch((error) => {
-               console.log(error);
+            .catch((err) => {
+               console.log(err);
             });
-         // redirect the user
-         this.props.history.push("/create-answer");
+         // update currentUser in global state with API response
+         // go to next page: this.props.history.push("/create-answer");
       }
    }
 
@@ -172,6 +165,9 @@ class SignUp extends React.Component {
                         <label htmlFor="exampleInputPassword2">
                            Create a password
                         </label>
+                        <p className="text-muted">
+                           Must be at least 9 characters
+                        </p>
                         <input
                            type="password"
                            className={classnames({
