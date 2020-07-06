@@ -1,3 +1,4 @@
+// this query returns a user from the database that matches an inputed email and password
 module.exports = function selectUser(email, password) {
    return `
       SELECT
