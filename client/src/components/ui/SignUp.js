@@ -4,7 +4,7 @@ import { v4 as getUuid } from "uuid";
 import { withRouter } from "react-router-dom"; // a React element for linking
 import { EMAIL_REGEX } from "../../utils/helpers";
 import axios from "axios";
-// import actions from "../../store/actions";
+import actions from "../../store/actions";
 import { connect } from "react-redux";
 
 class SignUp extends React.Component {
@@ -27,105 +27,53 @@ class SignUp extends React.Component {
       });
    }
 
-   // tests if the email is valid
-   async setEmailState(emailInput) {
-      const lowerCasedEmailInput = emailInput.toLowerCase();
-
-      if (emailInput === "")
-         this.setState({
-            emailError: "Please enter your email address.",
-            hasEmailError: true,
-         });
-      else if (!EMAIL_REGEX.test(lowerCasedEmailInput)) {
-         this.setState({
-            emailError: "Please enter a valid email address.",
-            hasEmailError: true,
-         });
-      } else {
-         this.setState({ emailError: "", hasEmailError: false });
-      }
-   }
-
-   // tests if the local part of the email is inside the password
-   checkHasLocalPart(passwordInput, emailInput) {
-      if (emailInput.length < 4) {
-         return false;
-      } else {
-         const localPart = emailInput.split("@")[0];
-         return passwordInput.includes(localPart);
-      }
-   }
-
-   // checks if the password is valid
-   async setPasswordState(passwordInput, emailInput) {
-      console.log("setPasswordState()...");
-
-      const uniqChars = [...new Set(passwordInput)];
-      console.log("uniqChars", uniqChars);
-
-      if (passwordInput === "") {
-         // check if password input is blank
-         this.setState({
-            passwordError: "Please create a password.",
-            hasPasswordError: true,
-         });
-      } else if (passwordInput.length < 9) {
-         // check if password is less than 9 characters
-         this.setState({
-            passwordError: "Your password must be at least 9 characters.",
-            hasPasswordError: true,
-         });
-      } else if (this.checkHasLocalPart(passwordInput, emailInput)) {
-         // check if the local part of email is in the password
-         this.setState({
-            passwordError: "Your password cannot contain your email address.",
-            hasPasswordError: true,
-         });
-      } else if (uniqChars.length < 3) {
-         // check if the password has less than 3 unique characters
-         this.setState({
-            passwordError:
-               "Your password must have at least three unique characters.",
-            hasPasswordError: true,
-         });
-      } else {
-         this.setState({ passwordError: "", hasPasswordError: false });
-      }
-   }
-
    // tests if the email and password are valid and if so creates the user
    async validateAndCreateUser() {
       const emailInput = document.getElementById("singup-email-input").value;
       const passwordInput = document.getElementById("singup-password-input")
          .value;
-      console.log(emailInput, passwordInput);
 
-      // await is used on these to make sure we get the states of these before the if statement
-      await this.setEmailState(emailInput);
-      await this.setPasswordState(passwordInput, emailInput);
+      // create user obj
+      const user = {
+         id: getUuid(), // make a new uuid
+         email: emailInput,
+         password: passwordInput, // send the plain text password over secure connection, the server will hash it
+         createdAt: Date.now(),
+      };
+      console.log("created user object for POST: ", user);
 
-      if (!this.state.hasEmailError && !this.state.hasPasswordError) {
-         // create user obj
-         const user = {
-            id: getUuid(), // make a new uuid
-            email: emailInput,
-            password: passwordInput, // send the plain text password over secure connection, the server will hash it
-            createdAt: Date.now(),
-         };
-         console.log("created user object for POST: ", user);
-
-         // post to API
-         axios
-            .post("/api/v1/users", user) // post to this endpoint the user object we just made
-            .then((res) => {
-               console.log(res);
-            })
-            .catch((err) => {
-               console.log(err);
+      // post to API
+      axios
+         .post("/api/v1/users", user) // post to this endpoint the user object we just made
+         .then((res) => {
+            console.log("res.data", res.data);
+            // update currentUser in global state with API response
+            this.props.dispatch({
+               type: actions.UPDATE_CURRENT_USER,
+               payload: res.data,
             });
-         // update currentUser in global state with API response
-         // go to next page: this.props.history.push("/create-answer");
-      }
+            // go to next page
+            this.props.history.push("/create-answer");
+         })
+         .catch((err) => {
+            const data = err.response.data;
+            console.log("err", data);
+            const { emailError, passwordError } = data;
+
+            // push email error to state
+            if (emailError !== "") {
+               this.setState({ hasEmailError: true, emailError });
+            } else {
+               this.setState({ hasEmailError: false, emailError });
+            }
+
+            // push password error to state
+            if (passwordError !== "") {
+               this.setState({ hasPasswordError: true, passwordError });
+            } else {
+               this.setState({ hasPasswordError: false, passwordError });
+            }
+         });
    }
 
    // renders the signup faceplate

@@ -2,48 +2,65 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../../db");
-const selectUser = require("../../queries/selectUser");
 const insertUser = require("../../queries/insertUser");
-const { toJson, toSafeParse, toHash } = require("../../utils/helpers");
-
-// @route      GET api/v1/users
-// @desc       Get a valid user via email and password
-// @access     Public
-router.get("/", (req, res) => {
-   db.query(selectUser("mike@gmail.com", "replace_me"))
-      .then((dbRes) => {
-         // successful response
-         const user = toSafeParse(toJson(dbRes))[0]; // converts the response to a single user object
-         console.log(user);
-         res.json(user);
-      })
-      .catch((err) => {
-         // report error to the user
-         console.log(err);
-         res.status(400).json(err);
-      });
-});
+const selectUserById = require("../../queries/selectUserById");
+const { toHash } = require("../../utils/helpers");
+const getSignUpEmailError = require("../../validation/getSignUpEmailError");
+const getSignUpPasswordError = require("../../validation/getSignUpPasswordError");
 
 // @route      POST api/v1/users (going to post one thing to this list of things)
 // @desc       Creat a new user
 // @access     Public
 router.post("/", async (req, res) => {
-   const user = {
-      id: req.body.id,
-      email: req.body.email,
-      password: await toHash(req.body.password), // hash the password (npm install bcrypt)
-      created_at: req.body.createdAt,
-   };
+   const { id, email, password, createdAt } = req.body; // destructuring to simplify code below, grabbing variables from req.body
+   const emailError = await getSignUpEmailError(email);
+   const passwordError = getSignUpPasswordError(password, email);
+   let dbError = ""; // this will store some text describing an error from the database
 
-   db.query(insertUser, user)
-      .then((dbRes) => {
-         console.log("dbRes", dbRes);
-         // return the user data to we can put in redux store
-      })
-      .catch((err) => {
-         console.log("err", err);
-         // return a 400 error to user
+   console.log("emailError, passwordError", emailError, passwordError);
+
+   // if there are no errors with email and password:
+   if (emailError === "" && passwordError == "") {
+      // this is an express function
+      const user = {
+         id, // if the key and value are called the same, you can just have the key
+         email, // if the key and value are called the same, you can just have the key
+         password: await toHash(password), // hash the password (npm install bcrypt)
+         created_at: createdAt,
+      };
+
+      db.query(insertUser, user)
+         .then((dbRes) => {
+            // return the user data to we can put in redux store
+            db.query(selectUserById, id)
+               .then((users) => {
+                  const user = users[0]; // the user is the first user in the array of 1 item
+                  res.status(200).json({
+                     id: user.id,
+                     email: user.email,
+                     createdAt: user.created_at,
+                  });
+               })
+               .catch((err) => {
+                  console.log("err", err);
+                  dbError = `${err.code} ${err.sqlMessage}`; // format the database error
+                  // return a 400 error to user
+                  res.status(400).json({ dbError });
+               });
+         })
+         .catch((err) => {
+            console.log("err", err);
+            dbError = `${err.code} ${err.sqlMessage}`; // format the database error
+            // return a 400 error to user
+            res.status(400).json({ dbError });
+         });
+   } else {
+      // return a 400 error to user
+      res.status(400).json({
+         emailError,
+         passwordError,
       });
-}); // this is an express function
+   }
+});
 
 module.exports = router;
