@@ -2,7 +2,6 @@ import React from "react";
 import classnames from "classnames";
 import { v4 as getUuid } from "uuid";
 import { withRouter } from "react-router-dom"; // a React element for linking
-import { EMAIL_REGEX } from "../../utils/helpers";
 import axios from "axios";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
@@ -40,7 +39,6 @@ class SignUp extends React.Component {
          password: passwordInput, // send the plain text password over secure connection, the server will hash it
          createdAt: Date.now(),
       };
-      console.log("created user object for POST: ", user);
 
       // post to API
       axios
