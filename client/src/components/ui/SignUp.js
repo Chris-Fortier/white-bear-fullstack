@@ -50,6 +50,11 @@ class SignUp extends React.Component {
                type: actions.UPDATE_CURRENT_USER,
                payload: res.data,
             });
+
+            // set authorization headers for every request at the moment of log in
+            // TODO: add this in once we pass the authToken in our response
+            // axios.defaults.headers.common["x-auth-token"] = authToken;
+
             // go to next page
             this.props.history.push("/create-answer");
          })

@@ -42,6 +42,10 @@ class LogIn extends React.Component {
                type: actions.UPDATE_CURRENT_USER,
                payload: user,
             });
+
+            // set authorization headers for every request at the moment of log in
+            axios.defaults.headers.common["x-auth-token"] = authToken;
+
             // go to next page
             this.props.history.push("/create-answer");
          })
