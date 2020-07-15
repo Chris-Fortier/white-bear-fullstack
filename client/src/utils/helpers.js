@@ -1,7 +1,9 @@
-function checkIsOver(num, limit) {
+export function checkIsOver(num, limit) {
    return num > limit;
 }
 
-const MAX_CARD_CHARS = 240;
+export const MAX_CARD_CHARS = 240;
 
-export { checkIsOver, MAX_CARD_CHARS };
+export const defaultLevel = 1;
+
+// export { checkIsOver, MAX_CARD_CHARS };

@@ -1,11 +1,14 @@
 import React from "react";
 import AppTemplate from "../ui/AppTemplate";
-import { Link } from "react-router-dom"; // a React element for linking
 import classnames from "classnames";
-import { MAX_CARD_CHARS } from "../../utils/helpers"; // use {} if its not importing the default export
+import { MAX_CARD_CHARS, defaultLevel } from "../../utils/helpers"; // use {} if its not importing the default export
 import Counter from "../ui/Counter";
+import { connect } from "react-redux";
+import actions from "../../store/actions";
+import { v4 as getUuid } from "uuid";
+import getNextAttemptAt from "../../utils/getNextAttemptAt";
 
-export default class CreateAnswer extends React.Component {
+class CreateAnswer extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
@@ -28,6 +31,27 @@ export default class CreateAnswer extends React.Component {
    setAnswerText(e) {
       this.setState({ answerText: e.target.value }); // sets the state to match the user input (value of the event)
       // console.log(e.target, e.target.value);
+   }
+
+   setCreatableCard() {
+      console.log("UPDATE_CREATABLE_CARD");
+      const currentTime = Date.now();
+      this.props.dispatch({
+         type: actions.UPDATE_CREATABLE_CARD,
+         payload: {
+            // the card itself
+            id: getUuid(),
+            answer: this.state.answerText,
+            imagery: "",
+            userId: this.props.currentUser.id,
+            createdAt: currentTime,
+            nextAttemptAt: getNextAttemptAt(defaultLevel, currentTime), //
+            lastAttemptAt: currentTime,
+            totalSuccessfullAttempts: 0,
+            level: 1,
+         },
+      });
+      this.props.history.push("/create-imagery");
    }
 
    render() {
@@ -62,15 +86,17 @@ export default class CreateAnswer extends React.Component {
             <div className="row mb-4">
                <div className="col">
                   <div className="float-right">
-                     <Link
+                     <button
                         className={classnames(
                            "btn btn-primary btn-lg float-right",
                            { disabled: this.checkHasInvalidCharacterCount() }
                         )}
-                        to="/create-imagery"
+                        onClick={() => {
+                           this.setCreatableCard();
+                        }}
                      >
                         Next
-                     </Link>
+                     </button>
                   </div>
                </div>
             </div>
@@ -79,3 +105,9 @@ export default class CreateAnswer extends React.Component {
       );
    }
 }
+
+function mapStateToProps(state) {
+   return { currentUser: state.currentUser };
+}
+
+export default connect(mapStateToProps)(CreateAnswer);

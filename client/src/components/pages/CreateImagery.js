@@ -5,8 +5,10 @@ import { Link } from "react-router-dom"; // a React element for linking
 import classnames from "classnames";
 import { MAX_CARD_CHARS } from "../../utils/helpers"; // use {} if its not importing the default export
 import Counter from "../ui/Counter";
+import { connect } from "react-redux";
+import actions from "../../store/actions";
 
-export default class CreateImagery extends React.Component {
+class CreateImagery extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
@@ -31,6 +33,18 @@ export default class CreateImagery extends React.Component {
       // console.log(e.target, e.target.value);
    }
 
+   updateCreatableCard() {
+      console.log("updating creatable card");
+      const updatedCreatableCard = { ...this.props.creatableCard };
+      updatedCreatableCard.imagery = this.state.imageryText;
+      this.props.dispatch({
+         type: actions.UPDATE_CREATABLE_CARD,
+         payload: updatedCreatableCard,
+      });
+      // save to the database (make an API call)
+      // to to create-answer
+   }
+
    render() {
       return (
          <AppTemplate>
@@ -48,11 +62,7 @@ export default class CreateImagery extends React.Component {
                </div>
                <div className="card bg-secondary">
                   <div className="card-body" id="answer-content">
-                     Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                     Aenean commodo ligula eget dolor. Aenean massa. Cum sociis
-                     natoque penatibus et magnis dis parturient montes, nascetur
-                     ridiculus mus. Donec quam felis, ultricies nec,
-                     pellentesque eu, pretium quis, sem. Nulla consequat massa
+                     {this.props.creatableCard.answer}
                   </div>
                </div>
             </div>
@@ -74,12 +84,14 @@ export default class CreateImagery extends React.Component {
                   >
                      Back to answer
                   </Link>
-                  <Link
+                  <button
                      className={classnames(
                         "btn btn-primary btn-lg float-right",
                         { disabled: this.checkHasInvalidCharacterCount() }
                      )}
-                     to="/create-answer"
+                     onClick={() => {
+                        this.updateCreatableCard();
+                     }}
                   >
                      <img
                         src={saveIcon}
@@ -91,7 +103,7 @@ export default class CreateImagery extends React.Component {
                         alt=""
                      />
                      Save
-                  </Link>
+                  </button>
                </div>
             </div>
             {/* <!-- end of buttons --> */}
@@ -99,3 +111,9 @@ export default class CreateImagery extends React.Component {
       );
    }
 }
+
+function mapStateToProps(state) {
+   return { creatableCard: state.creatableCard };
+}
+
+export default connect(mapStateToProps)(CreateImagery);
