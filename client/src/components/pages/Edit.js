@@ -5,7 +5,7 @@ import memoryCards from "../../mock-data/memory-cards";
 import toDisplayDate from "date-fns/format";
 import classnames from "classnames";
 import { MAX_CARD_CHARS } from "../../utils/helpers"; // use {} if its not importing the default export
-import Counter from "../ui/Cosunter";
+import Counter from "../ui/Counter";
 import { connect } from "react-redux";
 import isEmpty from "lodash/isEmpty";
 import without from "lodash/without";

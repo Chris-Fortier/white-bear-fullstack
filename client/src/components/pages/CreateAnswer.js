@@ -47,7 +47,7 @@ class CreateAnswer extends React.Component {
             createdAt: currentTime,
             nextAttemptAt: getNextAttemptAt(defaultLevel, currentTime), //
             lastAttemptAt: currentTime,
-            totalSuccessfullAttempts: 0,
+            totalSuccessfulAttempts: 0,
             level: 1,
          },
       });
@@ -65,7 +65,6 @@ class CreateAnswer extends React.Component {
                      <textarea
                         rows="6"
                         className="d-sm-block"
-                        defaultValue={""}
                         onChange={(e) => this.setAnswerText(e)}
                         defaultValue={this.state.answerText}
                      ></textarea>
