@@ -13,7 +13,9 @@ const initialState = {
       card: [],
       prevRoute: "",
    },
-   creatableCard: {},
+   creatableCard: {
+      // answer: "", imagery: ""
+   },
 };
 
 const store = createStore(combineReducers, initialState, composeWithDevTools());

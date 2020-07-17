@@ -2,10 +2,10 @@ import React from "react";
 import AppTemplate from "../ui/AppTemplate";
 import { Link } from "react-router-dom"; // a React element for linking
 import memoryCards from "../../mock-data/memory-cards";
-import toDisplayData from "date-fns/format";
+import toDisplayDate from "date-fns/format";
 import classnames from "classnames";
 import { MAX_CARD_CHARS } from "../../utils/helpers"; // use {} if its not importing the default export
-import Counter from "../ui/Counter";
+import Counter from "../ui/Cosunter";
 import { connect } from "react-redux";
 import isEmpty from "lodash/isEmpty";
 import without from "lodash/without";
@@ -172,7 +172,7 @@ class Edit extends React.Component {
                         <tr>
                            <th scope="row">Created on:</th>
                            <td>
-                              {toDisplayData(
+                              {toDisplayDate(
                                  this.props.editableCard.card.createdAt,
                                  "MMM dd, yyyy"
                               )}
@@ -181,7 +181,7 @@ class Edit extends React.Component {
                         <tr>
                            <th scope="row">Last attempt:</th>
                            <td>
-                              {toDisplayData(
+                              {toDisplayDate(
                                  this.props.editableCard.card.lastAttemptAt,
                                  "MMM dd, yyyy"
                               )}
@@ -190,7 +190,7 @@ class Edit extends React.Component {
                         <tr>
                            <th scope="row">Next attempt:</th>
                            <td>
-                              {toDisplayData(
+                              {toDisplayDate(
                                  this.props.editableCard.card.nextAttemptAt,
                                  "MMM dd, yyyy"
                               )}

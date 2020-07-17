@@ -12,7 +12,7 @@ class CreateImagery extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         imageryText: "",
+         imageryText: this.props.creatableCard.answer,
       };
    }
 
@@ -113,7 +113,10 @@ class CreateImagery extends React.Component {
 }
 
 function mapStateToProps(state) {
-   return { creatableCard: state.creatableCard };
+   return {
+      creatableCard: state.creatableCard,
+      creatableCard: state.creatableCard,
+   };
 }
 
 export default connect(mapStateToProps)(CreateImagery);

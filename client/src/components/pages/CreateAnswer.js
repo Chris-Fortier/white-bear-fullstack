@@ -12,7 +12,7 @@ class CreateAnswer extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         answerText: "",
+         answerText: this.props.creatableCard.answer || "",
       };
    }
 
@@ -67,6 +67,7 @@ class CreateAnswer extends React.Component {
                         className="d-sm-block"
                         defaultValue={""}
                         onChange={(e) => this.setAnswerText(e)}
+                        defaultValue={this.state.answerText}
                      ></textarea>
                   </div>
                </div>
@@ -107,7 +108,10 @@ class CreateAnswer extends React.Component {
 }
 
 function mapStateToProps(state) {
-   return { currentUser: state.currentUser };
+   return {
+      currentUser: state.currentUser,
+      creatableCard: state.creatableCard,
+   };
 }
 
 export default connect(mapStateToProps)(CreateAnswer);
