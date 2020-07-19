@@ -34,24 +34,26 @@ class CreateAnswer extends React.Component {
    }
 
    setCreatableCard() {
-      console.log("UPDATE_CREATABLE_CARD");
-      const currentTime = Date.now();
-      this.props.dispatch({
-         type: actions.UPDATE_CREATABLE_CARD,
-         payload: {
-            // the card itself
-            id: getUuid(),
-            answer: this.state.answerText,
-            imagery: "",
-            userId: this.props.currentUser.id,
-            createdAt: currentTime,
-            nextAttemptAt: getNextAttemptAt(defaultLevel, currentTime), //
-            lastAttemptAt: currentTime,
-            totalSuccessfulAttempts: 0,
-            level: 1,
-         },
-      });
-      this.props.history.push("/create-imagery");
+      if (!this.checkHasInvalidCharacterCount()) {
+         console.log("UPDATE_CREATABLE_CARD");
+         const currentTime = Date.now();
+         this.props.dispatch({
+            type: actions.UPDATE_CREATABLE_CARD,
+            payload: {
+               // the card itself
+               id: getUuid(),
+               answer: this.state.answerText,
+               imagery: "",
+               userId: this.props.currentUser.id,
+               createdAt: currentTime,
+               nextAttemptAt: getNextAttemptAt(defaultLevel, currentTime), //
+               lastAttemptAt: currentTime,
+               totalSuccessfulAttempts: 0,
+               level: 1,
+            },
+         });
+         this.props.history.push("/create-imagery");
+      }
    }
 
    render() {

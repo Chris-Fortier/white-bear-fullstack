@@ -35,37 +35,38 @@ class CreateImagery extends React.Component {
    }
 
    async updateCreatableCard() {
-      console.log("updating creatable card");
-      const updatedCreatableCard = { ...this.props.creatableCard };
-      updatedCreatableCard.imagery = this.state.imageryText;
+      if (!this.checkHasInvalidCharacterCount()) {
+         console.log("updating creatable card");
+         const updatedCreatableCard = { ...this.props.creatableCard };
+         updatedCreatableCard.imagery = this.state.imageryText;
 
-      // wait for this action to be dispatched
-      await this.props.dispatch({
-         type: actions.UPDATE_CREATABLE_CARD,
-         payload: updatedCreatableCard,
-      });
-      // then save to the database (make an API call)
-      axios
-         .post("/api/v1/memory-cards", this.props.creatableCard)
-         .then((res) => {
-            console.log("memory card created");
-            // display success overlay
-            // route to "/create-answer"
-            this.props.dispatch({
-               type: actions.UPDATE_CREATABLE_CARD,
-               payload: {},
-            });
-            // clear creatableCard from Redux
-            this.props.history.push("/create-answer");
-         })
-         .catch((err) => {
-            const { data } = err.response;
-            console.log(data);
-            // display error overlay
-            // hide error overlay after 5 seconds
-            // stay on this page
+         // wait for this action to be dispatched
+         await this.props.dispatch({
+            type: actions.UPDATE_CREATABLE_CARD,
+            payload: updatedCreatableCard,
          });
-      // go to create-answer
+         // then save to the database (make an API call)
+         axios
+            .post("/api/v1/memory-cards", this.props.creatableCard)
+            .then((res) => {
+               console.log("memory card created");
+               // display success overlay
+               // route to "/create-answer"
+               this.props.dispatch({
+                  type: actions.UPDATE_CREATABLE_CARD,
+                  payload: {},
+               });
+               // clear creatableCard from Redux
+               this.props.history.push("/create-answer");
+            })
+            .catch((err) => {
+               const { data } = err.response;
+               console.log(data);
+               // display error overlay
+               // hide error overlay after 5 seconds
+               // stay on this page
+            });
+      }
    }
 
    render() {
