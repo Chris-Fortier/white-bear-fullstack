@@ -39,12 +39,24 @@ router.post("/", async (req, res) => {
             // return the user data to we can put in redux store
             db.query(selectUserById, id)
                .then((users) => {
-                  const user = users[0]; // the user is the first user in the array of 1 item
-                  res.status(200).json({
-                     id: user.id,
-                     email: user.email,
-                     createdAt: user.created_at,
-                  });
+                  // what the user is
+                  // the user is the first user in the array of 1 item (users[0])
+                  const user = {
+                     id: users[0].id,
+                     email: users[0].email,
+                     createdAt: users[0].created_at,
+                  };
+
+                  // this contains the user, a secret and the timeframe
+                  // 1m fopr testing, could be longer like 3h, 7d etc
+                  const accessToken = jwt.sign(
+                     user,
+                     process.env.JWT_ACCESS_SECRET
+                  );
+                  // TODO: refresh token
+
+                  res.status(200).json({ accessToken }); // instead of passing the user as the response, pass the access token
+                  // this then statement is executing a side-effect
                })
                .catch((err) => {
                   console.log("err", err);
@@ -83,7 +95,6 @@ router.post("/auth", async (req, res) => {
       // return the user to the client
       db.query(selectUserByEmail, email)
          .then((users) => {
-            // TODO: repeat when creating a user
             // what the user is
             // the user is the first user in the array of 1 item (users[0])
             const user = {

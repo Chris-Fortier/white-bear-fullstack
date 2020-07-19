@@ -5,6 +5,7 @@ import { withRouter } from "react-router-dom"; // a React element for linking
 import axios from "axios";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
+import jwtDecode from "jwt-decode";
 
 class SignUp extends React.Component {
    constructor(props) {
@@ -44,16 +45,21 @@ class SignUp extends React.Component {
       axios
          .post("/api/v1/users", user) // post to this endpoint the user object we just made
          .then((res) => {
-            console.log("res.data", res.data);
-            // update currentUser in global state with API response
+            // set token in localStorage
+            const authToken = res.data.accessToken;
+            localStorage.setItem("authToken", authToken);
+            console.log("authToken", authToken);
+
+            const user = jwtDecode(authToken); // decode the user from the access token
+
+            // send the user to Redux
             this.props.dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: res.data,
+               payload: user,
             });
 
             // set authorization headers for every request at the moment of log in
-            // TODO: add this in once we pass the authToken in our response
-            // axios.defaults.headers.common["x-auth-token"] = authToken;
+            axios.defaults.headers.common["x-auth-token"] = authToken;
 
             // go to next page
             this.props.history.push("/create-answer");

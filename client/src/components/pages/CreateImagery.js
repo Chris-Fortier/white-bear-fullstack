@@ -51,6 +51,12 @@ class CreateImagery extends React.Component {
             console.log("memory card created");
             // display success overlay
             // route to "/create-answer"
+            this.props.dispatch({
+               type: actions.UPDATE_CREATABLE_CARD,
+               payload: {},
+            });
+            // clear creatableCard from Redux
+            this.props.history.push("/create-answer");
          })
          .catch((err) => {
             const { data } = err.response;
