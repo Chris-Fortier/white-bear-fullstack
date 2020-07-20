@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+var cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
 
 // res means response
@@ -9,6 +11,7 @@ app.use(express.json());
 // need one of these for every url route
 app.use("/api/v1/users", require("./api/v1/users")); // the route and then the file
 app.use("/api/v1/memory-cards", require("./api/v1/memory-cards")); // the route and then the file
+app.use("/api/v1/queue", require("./api/v1/queue")); // the route and then the file
 
 // if none of the routes are hit, use what's in the build folder
 app.use(express.static("client/build"));

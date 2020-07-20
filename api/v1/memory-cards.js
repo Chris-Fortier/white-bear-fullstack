@@ -53,12 +53,12 @@ router.get("/", validateJwt, (req, res) => {
             };
          });
 
-         res.json(camelCaseMemoryCards);
+         return res.status(200).json(camelCaseMemoryCards);
       })
       .catch((err) => {
          // report error
          console.log(err);
-         res.status(400).json(err);
+         return res.status(400).json(err);
       });
 });
 
@@ -99,7 +99,7 @@ router.post("/", validateJwt, (req, res) => {
       .catch((err) => {
          console.log("err", err);
          dbError = `${err.code} ${err.sqlMessage}`;
-         res.status(400).json({ dbError });
+         return res.status(400).json({ dbError });
       });
 });
 

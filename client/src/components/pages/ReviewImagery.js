@@ -16,9 +16,7 @@ class ReviewImagery extends React.Component {
       if (props.queue.cards.length === 0) {
          console.log("Empty arr of queue cards");
          axios
-            .get(
-               "https://raw.githubusercontent.com/punchcode-fullstack/white-bear-mpa/localstates/src/mock-data/memory-cards.json"
-            )
+            .get(`/api/v1/queue`)
             .then((res) => {
                // handle success
                // res is shorthand for response
